@@ -7,6 +7,7 @@ end_of_line = lf
 insert_final_newline = true
 
 [*.{m}]
-indent_style = space
-indent_size = 2
+indent_style = tab
+indent_size = 1
+tab_width = 2
 
