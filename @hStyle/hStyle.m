@@ -1,5 +1,5 @@
 classdef (Sealed = true) hStyle < handle
-% hierarchic logging (singleton)
+% singleton styling
 
 	properties
 

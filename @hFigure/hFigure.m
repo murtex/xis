@@ -1,4 +1,5 @@
 classdef hFigure < handle
+% plotting
 
 	properties
 
