@@ -50,38 +50,27 @@ function h = subplot( this, m, n, p, varargin )
 
 	pos = [ppx, ppy, ppw, pph];
 
-		% apply default padding
-	switch numel( style.padding )
-		case 1
-			padding = repmat( style.padding, [1, 4] );
-		case 2
-			padding = repmat( reshape( style.padding(:), [1, 2] ), [1, 2] );
-		case 4
-			padding = style.padding;
-		otherwise
-			error( 'invalid value: padding' );
+		% compute padding
+	pad = transpose( style.refpad_(:) );
+	if isprop( style, 'pad_' )
+		pad = transpose( style.pad_(:) );
+	end
+
+	if numel( pad ) == 1
+		pad = repmat( pad, [1, 4] );
+	elseif numel( pad ) == 2
+		pad = repmat( pad, [1, 2] );
+	elseif numel( pad ) ~= 4
+		error( 'invalid value: pad' );
 	end
 
 	tmp = axes( 'Units', 'normalized' );
-	inset = padding .* get( tmp, 'LooseInset' );
+	inset = pad .* get( tmp, 'LooseInset' );
 	delete( tmp );
 
 	tmp = axes( 'Units', 'normalized', 'LooseInset', inset );
 	defpos = get( tmp, 'Position' );
 	delete( tmp );
-
-	%q = pos(3)/pos(4);
-	%if q > 1 % horizontal
-		%padleft = defpos(1) / q;
-		%padright = (1-defpos(1)-defpos(3)) / q;
-		%defpos(1) = padleft;
-		%defpos(3) = 1-padleft-padright;
-	%else % vertical
-		%padbottom = defpos(2) * q;
-		%padtop = (1-defpos(2)-defpos(4)) * q;
-		%defpos(2) = padbottom;
-		%defpos(4) = 1-padbottom-padtop;
-	%end
 
 	pos(1) = pos(1)+defpos(1)*pos(3);
 	pos(3) = defpos(3)*pos(3);

@@ -21,7 +21,7 @@ function title( this, s )
 		% insert title
 	this.fit();
 
-	if ~style.headless
+	if style.fhead
 		hvis = findobj( this.hfig, 'Type', 'axes', 'Visible', 'on' );
 		ext = this.extent( hvis, 'raw' );
 

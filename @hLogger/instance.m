@@ -26,9 +26,8 @@ function that = instance( logfile )
 		end
 
 			% reset
-		delete( this ); % stop logging
-
-		this = hLogger.instance(); % (re-)start logging
+		this.done();
+		this = hLogger.instance();
 
 		if exist( logfile, 'file' ) == 2
 			delete( logfile );

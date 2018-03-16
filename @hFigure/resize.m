@@ -24,8 +24,8 @@ function resize( this, m, n )
 	style = hStyle.instance();
 
 		% resize figure
-	width = n*style.size(1) / style.grid(2);
-	height = m*style.size(2) / style.grid(1);
+	width = n*style.size_(1);
+	height = m*style.size_(2);
 
 	set( this.hfig, ...
 		'Units', style.units, ...

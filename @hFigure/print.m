@@ -27,7 +27,7 @@ function print( this, filename, varargin )
 			% bitmap graphics
 		case '.png'
 			f = this.getframe( style.dpi );
-			opts = {'BitDepth', 16};
+			opts = {'BitDepth', style.bpp};
 			imwrite( f, filename, opts{:} );
 
 		case '.tiff'

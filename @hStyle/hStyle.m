@@ -3,32 +3,38 @@ classdef (Sealed = true) hStyle < handle
 
 	properties
 
-		headless = false;
+		fhead = true; % title flag
+		fmono = false; % monochromatic flag
+		ffull = true; % fullscreen flag
 
-			% dimensions
-		units;
+		units; % base units
+		dpi; % spatial resolution
+		bpp; % color resolution
+		fontname; % font
 
-		dpi;
-		normwidth;
+		refsize_; % reference size
+		refpad_; % reference padding
+		refstroke_; % reference stroke
+		reffont_; % reference font
 
-		fontbase;
-		fontname;
+		size_; % current size
+		pad_; % current padding
 
-		size;
-		grid;
-		padding;
-
-		lwthin; % aliases
+			% aliases
+		lwthinner; % line widths
+		lwthin;
 		lwnorm;
 		lwthick;
 
-		msnano;
+		msnano; % marker sizes
 		msmicro;
 		mstiny;
 		mssmall;
 		msnorm;
 		mslarge;
 
+		fsnano; % font sizes
+		fsmicro;
 		fstiny;
 		fssmall;
 		fsnorm;
@@ -48,7 +54,10 @@ classdef (Sealed = true) hStyle < handle
 	end % properties
 
 	methods
-		function v = get.lwthin( this ) % line widths
+		function v = get.lwthinner( this ) % line widths
+			v = this.width( -2 );
+		end
+		function v = get.lwthin( this )
 			v = this.width( -1 );
 		end
 		function v = get.lwnorm( this )
@@ -77,17 +86,23 @@ classdef (Sealed = true) hStyle < handle
 			v = this.width( 5 );
 		end
 
-		function v = get.fstiny( this ) % font sizes
-			v = this.fontbase*this.width( -1 )/this.width( 0 );
+		function v = get.fsnano( this ) % font sizes
+			v = this.reffont_*this.width( -2 )/this.width( 0 );
+		end
+		function v = get.fsmicro( this )
+			v = this.reffont_*this.width( -1.5 )/this.width( 0 );
+		end
+		function v = get.fstiny( this )
+			v = this.reffont_*this.width( -1 )/this.width( 0 );
 		end
 		function v = get.fssmall( this )
-			v = this.fontbase*this.width( -0.5 )/this.width( 0 );
+			v = this.reffont_*this.width( -0.5 )/this.width( 0 );
 		end
 		function v = get.fsnorm( this )
-			v = this.fontbase*this.width( 0 )/this.width( 0 );
+			v = this.reffont_*this.width( 0 )/this.width( 0 );
 		end
 		function v = get.fslarge( this )
-			v = this.fontbase*this.width( 0.5 )/this.width( 0 );
+			v = this.reffont_*this.width( 0.5 )/this.width( 0 );
 		end
 	end % aliases
 
@@ -111,7 +126,7 @@ classdef (Sealed = true) hStyle < handle
 			this.layout( 'default' );
 
 				% coloring
-			this.gencols( 'hsv', 1024 );
+			this.gencols();
 
 			this.background = this.color( NaN, this.shadehi );
 

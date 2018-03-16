@@ -32,16 +32,24 @@ classdef hFigure < handle
 				'Renderer', 'opengl', ...
 				'defaultAxesNextPlot', 'add' };
 
+			size = transpose( style.refsize_(:) );
+			if isprop( style, 'size_' )
+				size = transpose( style.size_(:) );
+			end
+
 			props = cat( 2, props, ... % size
 				'Units', style.units, ...
-				'Position', [0, 0, style.size(1), style.size(2)], ...
+				'Position', [0, 0, size], ...
 				'PaperUnits', style.units, ...
-				'PaperPosition', [0, 0, style.size(1), style.size(2)], ...
-				'PaperSize', [style.size(1), style.size(2)] );
+				'PaperPosition', [0, 0, size], ...
+				'PaperSize', size );
 
-			props = cat( 2, props, ... % background
-				'Color', style.background, ...
-				'InvertHardCopy', 'off' );
+			if style.fmono % background
+				props = cat( 2, props, 'Color', [1, 1, 1] );
+			else
+				props = cat( 2, props, 'Color', style.background );
+			end
+			props = cat( 2, props, 'InvertHardCopy', 'off' );
 
 			props = cat( 2, props, ... % fonts
 				'defaultTextInterpreter', 'none', ...
@@ -83,8 +91,17 @@ classdef hFigure < handle
 			end
 
 			this.hfig = figure( props{:}, varargin{:} );
-
 			this.resize( 1, 1 );
+
+				% maximize visible window
+			if style.ffull && strcmp( get( this.hfig, 'Visible' ), 'on' )
+				ws = warning( 'off', 'MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame' );
+
+				pause( 0.01 );
+				set( get( handle( gcf() ), 'JavaFrame' ), 'Maximized', 1 );
+
+				warning( ws );
+			end
 
 				% create root axis
 			this.root = this.blank();

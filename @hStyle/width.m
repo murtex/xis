@@ -20,7 +20,7 @@ function w = width( this, wf )
 	end
 
 		% set point width
-	w = this.normwidth * 2^(wf/2);
+	w = this.refstroke_ * 2^(wf/2);
 
 end
 

@@ -29,7 +29,7 @@ function c = color( this, hue, shade )
 	tmp(2) = polyval( this.refp(:, 2), shade );
 	tmp(3) = polyval( this.refp(:, 3), shade );
 
-	if isnan( hue )
+	if isnan( hue ) || this.fmono
 		c = tmp([1, 1, 1]);
 
 	else % hue adjustment

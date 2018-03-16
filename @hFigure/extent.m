@@ -6,7 +6,7 @@ function ext = extent( this, h, type )
 % INPUT
 % this : figure reference (scalar object)
 % h : axis handles (graphics handle)
-% type : extent type (char)
+% type : extent type [outer, inset, inner, raw] (char)
 %
 % OUTPUT
 % ext : axis extent (row numeric [left, bottom, right, top])

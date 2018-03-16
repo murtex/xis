@@ -1,24 +1,14 @@
-function gencols( this, mode, n )
+function gencols( this )
 % generate styled colors
 %
-% GENCOLS( this, mode, n )
+% GENCOLS( this )
 %
 % INPUT
 % this : style reference (scalar object)
-% mode : interpolation mode (row numeric ['rgb', 'hsv', 'ycc'])
-% n : interpolation size (scalar numeric)
 
 		% safeguard
 	if nargin < 1 || ~isscalar( this ) || ~isa( this, 'hStyle' )
 		error( 'invalid argument: this' );
-	end
-
-	if nargin < 2 || ~isrow( mode ) || ~ischar( mode )
-		error( 'invalid argument: mode' );
-	end
-
-	if nargin < 3 || ~isscalar( n ) || ~isnumeric( n )
-		error( 'invalid argument: n' );
 	end
 
 		% up reference colors

@@ -12,7 +12,9 @@ function close( this )
 	end
 
 		% close figure
-	close( this.hfig );
+	if ishandle( this.hfig )
+		close( this.hfig );
+	end
 
 end % function
 
