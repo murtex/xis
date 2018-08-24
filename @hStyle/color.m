@@ -5,42 +5,63 @@ function c = color( this, hue, shade )
 % 
 % INPUT
 % this : style reference (scalar object)
-% hue : hue offset (scalar numeric)
-% shade : luma shade (scalar numeric)
+% hue : hue offset (numeric)
+% shade : luma shade (numeric)
 %
 % OUTPUT
-% c : color (row numeric [r, g, b])
+% c : color matrix [Nx3] (numeric)
+%
+% TODO: vectorize color generation!
 
 		% safeguard
 	if nargin < 1 || ~isscalar( this ) || ~isa( this, 'hStyle' )
 		error( 'invalid argument: this' );
 	end
 
-	if nargin < 2 || ~isscalar( hue ) || ~isnumeric( hue ) 
+	if nargin < 2 || ~isnumeric( hue ) 
 		error( 'invalid argument: hue' );
 	end
 
-	if nargin < 3 || ~isscalar( shade ) || ~isnumeric( shade ) 
+	if nargin < 3 || ~isnumeric( shade )
 		error( 'invalid argument: shade' );
 	end
 
-		% approximate color
-	tmp(1) = polyval( this.refp(:, 1), shade );
-	tmp(2) = polyval( this.refp(:, 2), shade );
-	tmp(3) = polyval( this.refp(:, 3), shade );
-
-	if isnan( hue ) || this.fmono
-		c = tmp([1, 1, 1]);
-
-	else % hue adjustment
-		cyuv(1) = tmp(1);
-		cyuv(2) = sum( [cos( 2*pi*hue ), -sin( 2*pi*hue )] .* [tmp(2)/this.umax, tmp(3)/this.vmax] )*this.umax;
-		cyuv(3) = sum( [sin( 2*pi*hue ), cos( 2*pi*hue )] .* [tmp(2)/this.umax, tmp(3)/this.vmax] )*this.vmax;
-
-		c = rgb2ycocg_( cyuv, true );
+		% adjust arguments
+	if numel( hue ) ~= numel( shade )
+		if numel( hue ) == 1
+			hue = repmat( hue, size( shade ) );
+		elseif numel( shade ) == 1
+			shade = repmat( shade, size( hue ) );
+		else
+			error( 'invalid combination: hue, shade' );
+		end
 	end
 
-	c(c < 0) = 0; % clamp values
+		% proceed colors
+	c = NaN( [numel( hue ), 3] );
+
+	for ci = 1:numel( hue )
+
+			% approximate color
+		tmp(1) = polyval( this.refp(:, 1), shade(ci) );
+		tmp(2) = polyval( this.refp(:, 2), shade(ci) );
+		tmp(3) = polyval( this.refp(:, 3), shade(ci) );
+
+		if isnan( hue(ci) ) || this.fmono
+			c(ci, :) = tmp([1, 1, 1]);
+
+		else % hue adjustment
+			cyuv(1) = tmp(1);
+			cyuv(2) = sum( [cos( 2*pi*hue(ci) ), -sin( 2*pi*hue(ci) )] .* [tmp(2)/this.umax, tmp(3)/this.vmax] )*this.umax;
+			cyuv(3) = sum( [sin( 2*pi*hue(ci) ), cos( 2*pi*hue(ci) )] .* [tmp(2)/this.umax, tmp(3)/this.vmax] )*this.vmax;
+
+			c(ci, :) = rgb2ycocg_( cyuv, true );
+		end
+
+	end
+
+		% validate colors
+	c(c < 0) = 0;
 	c(c > 1) = 1;
 
 end % function

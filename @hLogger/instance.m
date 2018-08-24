@@ -34,6 +34,7 @@ function that = instance( logfile )
 		end
 
 		diary( logfile );
+		this.logfile = logfile;
 		this.tics = tic();
 
 	end

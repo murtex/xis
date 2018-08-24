@@ -1,7 +1,7 @@
 function varargout = equalize( this, varargin )
 % equalize axes limits
 %
-% [xl, ...] = EQUALIZE( this, xl, ... )
+% ... = EQUALIZE( this, ... )
 %
 % INPUT
 % this : style reference (scalar object)
@@ -15,20 +15,20 @@ function varargout = equalize( this, varargin )
 		error( 'invalid argument: this' );
 	end
 
-		% equalize limits
-	xc = cell( size( varargin ) );
+		% determine centers and widths
+	xc = zeros( size( varargin ) );
+	xw = zeros( size( varargin ) );
+
 	for vi = 1:numel( varargin )
-		[varargout{vi}, xc{vi}] = this.limits( varargin{vi} );
+		[lim, xc(vi)] = this.limits( varargin{vi} );
+		xw(vi) = diff( lim );
 	end
 
-	dxl = cellfun( @diff, varargout ); % equal scales
-	d = max( ~isinf( dxl ).*dxl );
+		% equalize limits
+	xwmax = max( ~isinf( xw ).*xw );
 
-	for vi = 1:numel( varargout )
-		if isinf( dxl(vi) ) || dxl(vi) < d
-			varargout{vi}(1) = xc{vi}-d/2;
-			varargout{vi}(2) = xc{vi}+d/2;
-		end
+	for vi = 1:numel( varargin )
+		varargout{vi} = xc(vi)+[-xwmax, xwmax]/2;
 	end
 
 end % function

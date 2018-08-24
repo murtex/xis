@@ -1,0 +1,93 @@
+\documentclass[11pt, a4paper]{article}
+\RequirePackage[utf8]{inputenc} % TODO
+
+	% tao
+\def\taotitle{Spline approximation}
+\def\taobrief{\taotitle}
+\def\taosubject{}
+\def\taoauthor{Stephan R. Kuberski}
+\def\taoaddress{University of Potsdam\\Linguistics Department\\Excellence Area in Cognitive Science\\Potsdam, Germany}
+\def\taoemail{kuberski@uni-potsdam.de}
+\def\taokeywords{}
+
+\usepackage[styles={fonts-garamond, page-2cm}]{taopaper}
+
+	% -------------------------------------------------------------------------
+	% content
+	% -------------------------------------------------------------------------
+\begin{document}
+
+\section*{Piecewise $n$-th order spline approximation}
+\begin{itemize}
+	\item let ${x_0,\ldots,x_N}$ be a sequence of ${N+1}$ data points with (numerical) derivatives ${x^{(k)}_0,\ldots,x^{(k)}_N}$ up to the $k$-th order; assumptions is that these data points are results of an underlying function ${f(t)}$ at instants ${t_0,\ldots,t_N}$ equidistantly distributed with ${h=\Deltaup t}$
+	\item sought are $N$ piecewise spline representations ${p_0(t),\dots,p_{N-1}(t)}$ of ${f(t)}$
+	\item let ${p_s(t)}$ be the sought $n$-th order spline representation of the segment ${[t_s,t_{s+1}]}$
+		\begin{align}
+			p_s(t)=\sum_{i=0}^n a_{s,i}T_s^i(t),\quad T_s(t)=\mfrac{t-t_s}h\quad\Rightarrow\quad p_s^{(k)}(t)=\frac1{h^k}\sum_{i=k}^n\frac{i!}{(i-k)!}a_{s,i}T_s^{i-k}(t)
+		\end{align}
+	\item in particular, the derivatives at joint knots read
+		\begin{align}
+			p_s^{(k)}(t_s)=\frac{k!}{h^k}a_{s,k},\quad p_s^{(k)}(t_{s+1})=\frac1{h^k}\sum_{i=k}^n\frac{i!}{(i-k)!}a_{s,i}
+		\end{align}
+\end{itemize}
+
+\subsection*{Data approximation constraints}
+\begin{itemize}
+	\item interpolation of given data points up to the $m$-th order derivative yields ${2(m+1)}$ constraints
+		\begin{align}
+			p_s^{(0)}(t_s)=x_s^{(0)},\quad p_s^{(0)}(t_{s+1})=x_{s+1}^{(0)},\quad\ldots,\quad p_s^{(m)}(t_s)=x_s^{(m)},\quad p_s^{(m)}(t_{s+1})=x_{s+1}^{(m)}
+		\end{align}
+	\item expressed in matrix notation
+		\begin{align}
+			\begin{pmatrix}
+				x_s^{(0)}\\
+				\vdots\\
+				x_s^{(m)}\\
+				x_{s+1}^{(0)}\\
+				\vdots\\
+				x_{s+1}^{(m)}
+			\end{pmatrix}
+			=\begin{pmatrix}
+				\mfrac{0!}{h^0}&&0&0&\hdots&0\\
+				&\ddots&&\vdots&&\vdots\\
+				0&&\mfrac{m!}{h^m}&0&\hdots&0\\
+				\mfrac{0!}{0!h^0}&\hdots&\mfrac{m!}{m!h^0}&\mfrac{(m+1)!}{(m+1)!h^0}&\hdots&\mfrac{n!}{n!h^0}\\
+				&\ddots&\vdots&\vdots&&\vdots\\
+				0&&\mfrac{m!}{0!h^m}&\mfrac{(m+1)!}{1!h^m}&\hdots&\mfrac{n!}{(n-m)!h^m}
+			\end{pmatrix}
+			\begin{pmatrix}
+				a_{s,0}\\
+				\vdots\\
+				a_{s,n}
+			\end{pmatrix}
+		\end{align}
+\end{itemize}
+
+\subsection*{Spline continuity constraints}
+\begin{itemize}
+	\item continuity up to the $k$-th order derivative gives $k$ constraints ($k=0$ is trivially fulfilled)
+		\begin{align}
+			p_s^{(1)}(t_s)=p_{s-1}^{(1)}(t_s),\quad\ldots,\quad p_s^{(k)}(t_s)=p_{s-1}^{(k)}(t_s)
+		\end{align}
+	\item expressed in matrix notation
+		\begin{align}
+			\begin{pmatrix}
+				\mfrac1{h^1}\sum_{i=1}^n\mfrac{i!}{(i-1)!}a_{s-1,i}\\
+				\vdots\\
+				\mfrac1{h^k}\sum_{i=k}^n\mfrac{i!}{(i-k)!}a_{s-1,i}
+			\end{pmatrix}
+			=\begin{pmatrix}
+				\mfrac{1!}{h^1}&&0&0&\ldots&0\\
+				&\ddots&&\vdots&&\vdots\\
+				0&&\mfrac{k!}{h^k}&0&\ldots&0
+			\end{pmatrix}
+			\begin{pmatrix}
+				a_{s,0}\\
+				\vdots\\
+				a_{s,n}
+			\end{pmatrix}
+		\end{align}
+\end{itemize}
+
+\end{document}
+

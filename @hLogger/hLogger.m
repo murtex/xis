@@ -6,6 +6,8 @@ classdef (Sealed = true) hLogger < handle
 		% properties
 	properties (Access = public)
 
+		logfile = ''; % log filename used
+
 		hierarchy = 0; % hierarchy (scalar numeric)
 		hierarchymax = Inf; % maximum hierarchy (scalar numeric)
 
@@ -15,6 +17,8 @@ classdef (Sealed = true) hLogger < handle
 
 		fprogress = false; % flags
 		fcritical = false;
+
+		fonce = false;
 
 	end
 

@@ -1,7 +1,7 @@
-function xp = convert( this, x, src, dst )
+function x = convert( this, x, src, dst )
 % convert units
 %
-% xp = CONVERT( this, x, src, dst )
+% x = CONVERT( this, x, src, dst )
 %
 % INPUT
 % this : style reference (scalar object)
@@ -10,7 +10,7 @@ function xp = convert( this, x, src, dst )
 % dst : destination units (char)
 %
 % OUTPUT
-% xp : converted output (numeric)
+% x : converted output (numeric)
 
 		% safeguard
 	if nargin < 1 || ~isscalar( this ) || ~isa( this, 'hStyle' )
@@ -29,34 +29,35 @@ function xp = convert( this, x, src, dst )
 		error( 'invalid argument: dst' );
 	end
 
-		% conversion
-	mul = 1;
-
-	switch src % cenversion to centimeters
-		case 'millimeters'
-			mul = mul/10;
-		case 'points'
-			mul = mul/72*2.54;
-		case 'pixels'
-			mul = mul/this.dpi*2.54;
+		% convert to centimeters
+	switch src
+		case {'mm', 'millimeters'}
+			x = x/10;
+		case {'pt', 'points'}
+			x = x/72*2.54;
+		case {'px', 'pixels'}
+			x = x/this.dpi*2.54;
+		case {'in', 'inches'}
+			x = x*2.54;
 
 		otherwise
 			error( 'invalid value: src' );
 	end
 
+		% convert from centimeters
 	switch dst % conversion from centimeters
-		case 'millimeters'
-			mul = mul*10;
-		case 'points'
-			mul = mul/2.54*72;
-		case 'pixels'
-			mul = mul/2.54*this.dpi;
+		case {'mm', 'millimeters'}
+			x = 10*x;
+		case {'pt', 'points'}
+			x = 72*x/2.54;
+		case {'px', 'pixels'}
+			x = this.dpi*x/2.54;
+		case {'in', 'inches'}
+			x = x/2.54;
 
 		otherwise
 			error( 'invalid value: dst' );
 	end
 
-	xp = mul * x;
-	
 end % function
 

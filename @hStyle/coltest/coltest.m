@@ -33,7 +33,9 @@ function coltest( cmodel, n, m )
 	addpath( '~/projects/xis/' );
 
 	style = hStyle.instance();
+
 	style.background = [1, 1, 1];
+	style.geometry( [4, 3], [1, 1], 1.0, [8, NaN, NaN, NaN] );
 
 		% set reference colors
 	rrgb = [...
@@ -44,7 +46,12 @@ function coltest( cmodel, n, m )
 	rrgb = [...
 		[0, 48, 94]; ...
 		[129, 139, 172]; ...
-		[193, 211, 224]] / 255; % uni potsdam
+		[193, 211, 224]] / 255; % uni potsdam (print)
+
+	rrgb = [...
+		[0, 66, 96]; ...
+		[89, 132, 152]; ...
+		[207, 218, 227]] / 255; % uni potsdam (web)
 
 	nrefs = size( rrgb, 1 );
 

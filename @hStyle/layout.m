@@ -1,54 +1,56 @@
-function layout( this, theme )
-% layout theme
+function layout( this, mode, dpi, width, fontsize )
+% set current layout
 %
-% LAYOUT( this, theme )
+% LAYOUT( this, mode, dpi, width, fontsize )
 %
 % INPUT
-% this : style reference (scalar object)
-% theme : source units (char)
+% mode : layout mode [screen, paper, talk] (char)
+% dpi : dots per inch (numeric scalar)
+% width: layout width (char)
+% fontsize: font size (char)
 
 		% safeguard
-	if nargin < 1 || ~isscalar( this ) || ~isa( this, 'hStyle' )
-		error( 'invalid argument: this' );
+	if nargin < 1 || ~ischar( mode )
+		error( 'invalid argument: mode' );
 	end
 
-	if nargin < 2 || ~ischar( theme )
-		error( 'invalid argument: theme' );
+	if nargin < 2 || ~isnumeric( dpi ) || ~isscalar( dpi )
+		error( 'invalid argument: dpi' );
 	end
 
-		% set theme
-	this.units = 'points';
-	this.dpi = 320;
-	this.bpp = 16;
-	this.fontname = 'liberation sans';
+	if nargin < 3 || ~ischar( width )
+		error( 'invalid argument: width' );
+	end
 
-	switch theme
-		case 'default'
-			this.refsize_ = this.convert( [210, 148], 'millimeters', this.units ); % a5paper landscape
-			this.refpad_ = 0.75;
-			this.refstroke_ = this.convert( 0.25, 'millimeters', this.units ); % 0.25mm stroke
-			this.reffont_ = this.convert( 3.0, 'millimeters', this.units ); % 3mm font
+	if nargin < 4 || ~ischar( fontsize )
+		error( 'invalid argument: fontsize' );
+	end
 
-		%case 'paper'
-			%normwidth = this.convert( 0.35, 'millimeters', this.units );
-			%fontbase = this.convert( 4.0, 'millimeters', this.units );
-			%size = this.convert( [210, 130], 'millimeters', this.units );
+		% set current layout
+	switch mode
+		case 'screen'
+			this.dpi = dpi;
+			this.refwidth = convert_( this, width );
+			this.refstroke = convert_( this, '0.5mm' );
+			this.reffont = convert_( this, fontsize );
 
-		%case 'a0poster'
-			%floatwidth = 0.95;
-			%this.dpi = 600;
-			%normwidth = this.convert( 0.35/floatwidth, 'millimeters', this.units );
-			%fontbase = this.convert( 4.0/floatwidth, 'millimeters', this.units );
-			%size = this.convert( [297, 210], 'millimeters', this.units );
-			
-		%case 'animation'
-			%normwidth = this.convert( 1.5, 'pixels', this.units );
-			%fontbase = this.convert( 14, 'pixels', this.units );
-			%size = this.convert( [640, 480], 'pixels', this.units );
+		case 'paper'
+			this.dpi = dpi;
+			this.refwidth = convert_( this, width );
+			this.refstroke = convert_( this, '0.35mm' );
+			this.reffont = convert_( this, fontsize );
+
+		case 'talk'
+			error( 'TODO' );
 
 		otherwise
-			error( 'invalid value: theme' );
+			error( 'invalid value: mode' );
 	end
-	
+
+end % function
+
+	% local functions
+function v = convert_( this, v )
+	v = this.convert( str2num( v([1:end-2]) ), v([end-1:end]), this.units );
 end % function
 

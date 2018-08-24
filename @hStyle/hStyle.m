@@ -5,40 +5,49 @@ classdef (Sealed = true) hStyle < handle
 
 		fhead = true; % title flag
 		fmono = false; % monochromatic flag
-		ffull = true; % fullscreen flag
+		ffull = false; % fullscreen flag
+		fmenu = true; % toolbar flag
+		funits = true; % units flags
 
-		units; % base units
-		dpi; % spatial resolution
-		bpp; % color resolution
-		fontname; % font
+		units = 'points'; % base units
+		mag = sqrt( 2 ); % stroke magnification base
+		dpi = 600; % spatial resolution
+		bpp = 8; % color depth
 
-		refsize_; % reference size
-		refpad_; % reference padding
-		refstroke_; % reference stroke
-		reffont_; % reference font
+		fontname = 'liberation sans'; % font
+		fontmag = 1.2; % font magnification base
 
-		size_; % current size
-		pad_; % current padding
+		refwidth; % reference width
+		refstroke; % reference stroke
+		reffont; % reference font
+
+		size; % current size
+		pad; % current padding
 
 			% aliases
-		lwthinner; % line widths
+		lwthinnest; % line widths
+		lwthinner;
 		lwthin;
 		lwnorm;
 		lwthick;
+		lwthicker;
+		lwthickest;
 
-		msnano; % marker sizes
-		msmicro;
-		mstiny;
+		mssmallest; % marker sizes
+		mssmaller;
 		mssmall;
 		msnorm;
 		mslarge;
+		mslarger;
+		mslargest;
 
-		fsnano; % font sizes
-		fsmicro;
-		fstiny;
+		fssmallest; % font sizes
+		fssmaller;
 		fssmall;
 		fsnorm;
 		fslarge;
+		fslarger;
+		fslargest;
 
 			% coloring
 		refp;
@@ -54,55 +63,70 @@ classdef (Sealed = true) hStyle < handle
 	end % properties
 
 	methods
-		function v = get.lwthinner( this ) % line widths
-			v = this.width( -2 );
+		function v = get.lwthinnest( this ) % line widths
+			v = this.scale( this.refstroke, this.mag, -3 );
+		end
+		function v = get.lwthinner( this )
+			v = this.scale( this.refstroke, this.mag, -2 );
 		end
 		function v = get.lwthin( this )
-			v = this.width( -1 );
+			v = this.scale( this.refstroke, this.mag, -1 );
 		end
 		function v = get.lwnorm( this )
-			v = this.width( 0 );
+			v = this.scale( this.refstroke, this.mag, 0 );
 		end
 		function v = get.lwthick( this )
-			v = this.width( 1 );
+			v = this.scale( this.refstroke, this.mag, 1 );
+		end
+		function v = get.lwthicker( this )
+			v = this.scale( this.refstroke, this.mag, 2 );
+		end
+		function v = get.lwthickest( this )
+			v = this.scale( this.refstroke, this.mag, 3 );
 		end
 
-		function v = get.msnano( this ) % marker sizes
-			v = this.width( 0 );
+		function v = get.mssmallest( this ) % marker size
+			v = this.scale( this.refstroke, this.mag, 0 );
 		end
-		function v = get.msmicro( this )
-			v = this.width( 1 );
-		end
-		function v = get.mstiny( this )
-			v = this.width( 2 );
+		function v = get.mssmaller( this )
+			v = this.scale( this.refstroke, this.mag, 1 );
 		end
 		function v = get.mssmall( this )
-			v = this.width( 3 );
+			v = this.scale( this.refstroke, this.mag, 2 );
 		end
 		function v = get.msnorm( this )
-			v = this.width( 4 );
+			v = this.scale( this.refstroke, this.mag, 3 );
 		end
 		function v = get.mslarge( this )
-			v = this.width( 5 );
+			v = this.scale( this.refstroke, this.mag, 4 );
+		end
+		function v = get.mslarger( this )
+			v = this.scale( this.refstroke, this.mag, 5 );
+		end
+		function v = get.mslargest( this )
+			v = this.scale( this.refstroke, this.mag, 6 );
 		end
 
-		function v = get.fsnano( this ) % font sizes
-			v = this.reffont_*this.width( -2 )/this.width( 0 );
+		function v = get.fssmallest( this )
+			v = this.scale( this.reffont, this.fontmag, -3 );
 		end
-		function v = get.fsmicro( this )
-			v = this.reffont_*this.width( -1.5 )/this.width( 0 );
-		end
-		function v = get.fstiny( this )
-			v = this.reffont_*this.width( -1 )/this.width( 0 );
+		function v = get.fssmaller( this )
+			v = this.scale( this.reffont, this.fontmag, -2 );
 		end
 		function v = get.fssmall( this )
-			v = this.reffont_*this.width( -0.5 )/this.width( 0 );
+			v = this.scale( this.reffont, this.fontmag, -1 );
 		end
 		function v = get.fsnorm( this )
-			v = this.reffont_*this.width( 0 )/this.width( 0 );
+			v = this.scale( this.reffont, this.fontmag, 0 );
 		end
 		function v = get.fslarge( this )
-			v = this.reffont_*this.width( 0.5 )/this.width( 0 );
+			v = this.scale( this.reffont, this.fontmag, 1 );
+		end
+		function v = get.fslarger( this )
+			v = this.scale( this.reffont, this.fontmag, 2 );
+		end
+		function v = get.fslargest( this )
+			v = this.scale( this.reffont, this.fontmag, 3 );
 		end
 	end % aliases
 
@@ -122,12 +146,8 @@ classdef (Sealed = true) hStyle < handle
 		% OUTPUT
 		% this : style reference (scalar object)
 
-				% dimensions
-			this.layout( 'default' );
-
-				% coloring
+			this.units = 'points';
 			this.gencols();
-
 			this.background = this.color( NaN, this.shadehi );
 
 		end

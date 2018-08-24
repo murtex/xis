@@ -46,7 +46,7 @@ function [xl, xc] = limits( this, x, m, c )
 
 	x(isnan( x )) = []; % remove nans
 
-	x(isinf( x ) & x < 0) = c(1); % clamp infinities
+	x(isinf( x ) & x < 0) = c(1); % onstrain infinities
 	x(isinf( x ) & x > 0) = c(2);
 
 	x(isinf( abs( x ) )) = []; % handle remaining infinities
